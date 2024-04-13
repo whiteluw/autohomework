@@ -7,8 +7,8 @@ import time
 
 # 百度翻译API信息
 api_url = "https://fanyi-api.baidu.com/api/trans/vip/translate"
-app_id = ""
-api_key = ""
+app_id = "20231213001909570"
+api_key = "xBZvpPMAufwuu4vAEXPb"
 
 # 初始化键盘控制器
 keyboard = Controller()
@@ -34,7 +34,7 @@ def record_audio(wave_output_filename):
                     input=True,
                     frames_per_buffer=chunk)
 
-    print("* 正在录音")
+    print("* 开始录音")
     frames = []
 
     for i in range(0, int(rate / chunk * record_seconds)):
@@ -62,10 +62,6 @@ def speech_to_text(audio_filename):
             return text
         except sr.UnknownValueError:
             print("未能识别语音，请重试。")
-            keyboard.press(Key.enter)
-            keyboard.release(Key.enter)
-            time.sleep(1)
-            return speech_to_text(audio_filename)
 
 # 文字翻译函数
 def translate_text(text, src_lang, dest_lang):
@@ -95,11 +91,23 @@ def simulate_typing(input_text):
     keyboard.release(Key.tab)
 
 # 主循环
+print('将在5秒后开始运行....')
+time.sleep(5)
+print('开始运行！')
+print('【输入】按下Enter播放音频')
+keyboard.press(Key.enter)
+keyboard.release(Key.enter)
+print ("-------------------------")
 while True:
-    time.sleep(2)
-    audio_filename = "temp_audio.wav"
-    record_audio(audio_filename)
-    text = speech_to_text(audio_filename)
-    simulate_typing(text)
-    translated_text = translate_text(text, 'en', 'zh')
-    simulate_typing(translated_text)
+    while True:
+        audio_filename = "temp_audio.wav"
+        record_audio(audio_filename)
+        text = speech_to_text(audio_filename)
+        print ('【转文字】语音=>'+str(text))
+        simulate_typing(text)
+        translated_text = translate_text(text, 'en', 'zh')
+        print ("【翻译】"+str(text)+"=>"+str(translated_text))
+        print ("【输入】模拟输入中")
+        simulate_typing(translated_text)
+        print ("【完成】下一个单词")
+        print ("-------------------------")

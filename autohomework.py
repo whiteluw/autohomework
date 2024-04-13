@@ -1,13 +1,12 @@
 import pyaudio
 import wave
-import os
 import speech_recognition as sr
 from pynput.keyboard import Key, Controller
 import requests
 import time
 
 # 百度翻译API信息
-api_url = "https://api.fanyi.baidu.com/api/trans/vip/translate"
+api_url = "https://fanyi-api.baidu.com/api/trans/vip/translate"
 app_id = ""
 api_key = ""
 
@@ -57,9 +56,16 @@ def record_audio(wave_output_filename):
 # 语音转文字函数
 def speech_to_text(audio_filename):
     with sr.AudioFile(audio_filename) as source:
-        audio_data = recognizer.record(source)
-        text = recognizer.recognize_google(audio_data)
-        return text
+        try:
+            audio_data = recognizer.record(source)
+            text = recognizer.recognize_google(audio_data)
+            return text
+        except sr.UnknownValueError:
+            print("未能识别语音，请重试。")
+            keyboard.press(Key.enter)
+            keyboard.release(Key.enter)
+            time.sleep(1)
+            return speech_to_text(audio_filename)
 
 # 文字翻译函数
 def translate_text(text, src_lang, dest_lang):
@@ -90,6 +96,7 @@ def simulate_typing(input_text):
 
 # 主循环
 while True:
+    time.sleep(2)
     audio_filename = "temp_audio.wav"
     record_audio(audio_filename)
     text = speech_to_text(audio_filename)

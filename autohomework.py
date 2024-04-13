@@ -1,5 +1,6 @@
 import pyaudio
 import wave
+import os
 import speech_recognition as sr
 from pynput.keyboard import Key, Controller
 import requests
